@@ -20,31 +20,38 @@ module Wisper
 
       def after_validation_broadcast
         action = new_record? ? 'create' : 'update'
-        broadcast("#{action}_#{broadcast_model_name_key}_failed", self) unless errors.empty?
+        broadcast("#{action}_#{broadcast_model_name_key}_failed", broadcast_identifier_args) unless errors.empty?
       end
 
       def after_create_broadcast
-        broadcast(:after_create, self)
-        broadcast("create_#{broadcast_model_name_key}_successful", self)
+        broadcast(:after_create, broadcast_identifier_args)
+        broadcast("create_#{broadcast_model_name_key}_successful", broadcast_identifier_args)
       end
 
       def after_update_broadcast
-        broadcast(:after_update, self)
-        broadcast("update_#{broadcast_model_name_key}_successful", self)
+        broadcast(:after_update, broadcast_identifier_args)
+        broadcast("update_#{broadcast_model_name_key}_successful", broadcast_identifier_args)
       end
 
       def after_destroy_broadcast
-        broadcast(:after_destroy, self)
-        broadcast("destroy_#{broadcast_model_name_key}_successful", self)
+        broadcast(:after_destroy, broadcast_identifier_args)
+        broadcast("destroy_#{broadcast_model_name_key}_successful", broadcast_identifier_args)
       end
 
       def after_commit_broadcast
-        broadcast(:after_commit, self)
-        broadcast("#{broadcast_model_name_key}_committed", self)
+        broadcast(:after_commit, broadcast_identifier_args)
+        broadcast("#{broadcast_model_name_key}_committed", broadcast_identifier_args)
       end
 
       def after_rollback_broadcast
-        broadcast(:after_rollback, self)
+        broadcast(:after_rollback, broadcast_identifier_args)
+      end
+
+      def broadcast_identifier_args
+        {
+          resource_type: self.class.model_name.param_key.titleize,
+          resource_id: id
+        }
       end
 
       def broadcast_model_name_key
