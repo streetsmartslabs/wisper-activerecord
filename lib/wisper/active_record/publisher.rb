@@ -49,7 +49,7 @@ module Wisper
 
       def broadcast_identifier_args
         {
-          resource_type: self.class.model_name.param_key.titleize,
+          resource_type: self.class.model_name.param_key.camelize(:upper),
           resource_id: id
         }
       end
